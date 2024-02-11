@@ -43,14 +43,15 @@ function correr(){
     const boolSentenciaSql = sentenciaSql.checked;
     const cadenaTexto      =  elementoTextArea.value;
           arr_of_filds     = getArr_Of_Filds(cadenaTexto);
+          let codigoPHP = generarCodigoPHP(arr_of_filds);
+          console.log(codigoPHP);
+
+
     elementoResultadoArray.innerText = 'el arr de Campos de tu tabla es : \n\n';      
     elementoResultadoArray.innerText = elementoResultadoArray.innerText +  arr_of_filds;
-    console.log(  consultaSelect( arr_of_filds , 'usuarios2') 
-                // getArr_Of_Filds(cadenaTexto)
-                // cadenaTexto
-    );
+    elementoResultadoArray.innerText+= '\n\n' + codigoPHP;
 }
-
+//------------------------------------------------
 function getArr_Of_Filds(cadenaTexto){
     let arrPartido = cadenaTexto.split('\n|');
     let arrQuerido = [];
@@ -64,7 +65,20 @@ function getArr_Of_Filds(cadenaTexto){
                                     } ) ;
   return arrQuerido;
 }
+//------------------------------------------------
+function generarCodigoPHP(datos) {
+    let codigoPHP = "";
+    datos.forEach(dato => {
+        codigoPHP += `if (isset($datos['${dato.toLowerCase()}'])) { $this->${capitalizeFirstLetter(dato)} = $datos['${dato.toLowerCase()}']; }\n`;
+    });
+    return codigoPHP;
+}
 
+//------------------------------------------------
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+//------------------------------------------------
 
 // k = ;
 
