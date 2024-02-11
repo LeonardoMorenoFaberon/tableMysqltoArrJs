@@ -32,6 +32,7 @@ elementoTextArea.value = `introduce esta tabla salida de cmd mysql para crear tu
 | estado    | tinyint(1)   | YES  |     | NULL    |       |`
    
 let arr_of_filds;
+let properties;
 
 buttonEjecutar.addEventListener( 'click' ,  correr );
     
@@ -50,6 +51,10 @@ function correr(){
     elementoResultadoArray.innerText = 'el arr de Campos de tu tabla es : \n\n';      
     elementoResultadoArray.innerText = elementoResultadoArray.innerText +  arr_of_filds;
     elementoResultadoArray.innerText+= '\n\n' + codigoPHP;
+    elementoResultadoArray.innerText+= '\n\n' + generateInsertQuery(arr_of_filds);
+    
+    // const query = generateInsertQuery(columns);
+    // console.log(query);
 }
 //------------------------------------------------
 function getArr_Of_Filds(cadenaTexto){
@@ -79,7 +84,35 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 //------------------------------------------------
+function generateInsertQuery(columns) {
+   
+   properties = {};
+   columns.forEach(elemento => {  properties[elemento] = '$this->' + elemento     });
 
+   console.log(properties);
+      
+   const tableVariable = '$this->table';
+
+   let concatenado = "";
+   columns.forEach( (elemento , index) => {concatenado+=  index < columns.length-1 ? elemento + " , " : elemento} );
+   const insertPart = `INSERT INTO ${tableVariable} ( ${concatenado} )`;
+
+   let concatVariables = "";
+   Object.keys(properties).forEach( (key , index) =>{ concatVariables += index < Object.keys(properties).length-1   ?    "'"+properties[key]+"'" + " , "   :   "'"+properties[key]+"'" } )
+   
+   const valuesPart = `${ concatVariables }`;
+   
+   
+   
+   return `${insertPart}\n  VALUES  \n(${valuesPart});`;
+}//generateInsertQuery ......................................................
+
+// Crear variable properties según las especificaciones
+
+
+// Ejemplo de uso
+// const columns = ['PacienteId', 'DNI', 'Nombre', 'Direccion', 'CodigoPostal', 'Telefono', 'Genero', 'FechaNacimiento', 'Correo'];
+// const tableVariable = '$this->table';
 // k = ;
 
 function consultaSelect( arrFilds , tableName){
